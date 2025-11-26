@@ -1,0 +1,68 @@
+@startuml packages
+
+skinparam package {
+    BackgroundColor #E8F4F8
+    BorderColor #3498DB
+}
+
+title Diagramme de packages - QuizLearn
+
+package "Presentation" {
+    package "Controller" {
+        [AuthController]
+        [QuizController]
+        [ResultController]
+        [UserController]
+    }
+}
+
+package "Security" {
+    [JWTAuthenticator]
+    [RoleVoter]
+}
+
+package "Business Logic" {
+    package "Service" {
+        [QuizService]
+        [ResultService]
+        [UserService]
+        [SessionService]
+        [ExportService]
+    }
+}
+
+package "Domain" {
+    package "Entity" {
+        [User]
+        [Quiz]
+        [Question]
+        [Answer]
+        [Session]
+        [Result]
+    }
+}
+
+package "Data Access" {
+    package "Repository" {
+        [UserRepository]
+        [QuizRepository]
+        [ResultRepository]
+        [SessionRepository]
+    }
+}
+
+package "Infrastructure" {
+    [Database]
+    [FileSystem]
+}
+
+' Dépendances entre packages
+Controller ..> Security : utilise
+Controller ..> Service : utilise
+Service ..> Entity : manipule
+Service ..> Repository : utilise
+Repository ..> Entity : persiste
+Repository ..> Database : accède
+ExportService ..> FileSystem : génère fichiers
+
+@enduml

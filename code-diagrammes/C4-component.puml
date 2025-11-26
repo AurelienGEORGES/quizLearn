@@ -1,0 +1,54 @@
+@startuml QuizLearn C4 Component Diagram
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagramme C4 Component - API REST Symfony
+
+Container(webapp, "Application Web", "JavaScript", "Interface utilisateur")
+ContainerDb(db, "Base de données", "MySQL", "Stockage des données")
+
+Container_Boundary(api, "API REST Symfony") {
+    
+    Component(authCtrl, "Auth Controller", "Symfony Controller", "Gère l'authentification et les tokens JWT")
+    
+    Component(quizCtrl, "Quiz Controller", "Symfony Controller", "Endpoints CRUD pour les quiz")
+    
+    Component(resultCtrl, "Result Controller", "Symfony Controller", "Endpoints pour résultats et statistiques")
+    
+    Component(userCtrl, "User Controller", "Symfony Controller", "Gestion des utilisateurs et profils")
+    
+    Component(jwtAuth, "JWT Authenticator", "Symfony Security", "Validation des tokens et gestion des rôles")
+    
+    Component(quizService, "Quiz Service", "Service Layer", "Logique métier des quiz")
+    
+    Component(resultService, "Result Service", "Service Layer", "Calcul scores et statistiques")
+    
+    Component(userService, "User Service", "Service Layer", "Gestion utilisateurs")
+    
+    Component(doctrine, "Doctrine ORM", "Persistence", "Mapping objet-relationnel")
+}
+
+Rel(webapp, authCtrl, "POST /login", "JSON/HTTPS")
+Rel(webapp, quizCtrl, "CRUD /api/quiz", "JSON/HTTPS")
+Rel(webapp, resultCtrl, "GET /api/results", "JSON/HTTPS")
+Rel(webapp, userCtrl, "CRUD /api/users", "JSON/HTTPS")
+
+Rel(authCtrl, jwtAuth, "Génère token")
+Rel(quizCtrl, jwtAuth, "Vérifie token")
+Rel(resultCtrl, jwtAuth, "Vérifie token")
+Rel(userCtrl, jwtAuth, "Vérifie token")
+
+Rel(authCtrl, userService, "Utilise")
+Rel(quizCtrl, quizService, "Utilise")
+Rel(resultCtrl, resultService, "Utilise")
+Rel(userCtrl, userService, "Utilise")
+
+Rel(quizService, doctrine, "Persiste via")
+Rel(resultService, doctrine, "Persiste via")
+Rel(userService, doctrine, "Persiste via")
+
+Rel(doctrine, db, "Lit/Écrit", "SQL")
+
+@enduml
