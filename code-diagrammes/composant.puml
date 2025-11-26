@@ -1,0 +1,144 @@
+@startuml composant
+
+!define RECTANGLE_COLOR #E8F4F8
+!define DATABASE_COLOR #FFE8CC
+!define EXTERNAL_COLOR #FFE6E6
+
+skinparam component {
+    BackgroundColor RECTANGLE_COLOR
+    BorderColor #3498DB
+    ArrowColor #2C3E50
+}
+
+skinparam database {
+    BackgroundColor DATABASE_COLOR
+    BorderColor #F39C12
+}
+
+title Diagramme de composants - QuizLearn (Symfony + MySQL)
+
+' Couche Présentation
+package "Couche Présentation" {
+    [Interface Web\nFormateur] as WebFormateur
+    [Interface Web\nApprenant] as WebApprenant
+    [API REST] as API
+}
+
+' Couche Application (Symfony)
+package "Application Symfony" {
+    
+    package "Sécurité" {
+        [Authentification\nJWT] as Auth
+        [Gestion des rôles] as Roles
+    }
+    
+    package "Services Métier" {
+        [Service Quiz] as QuizService
+        [Service Utilisateur] as UserService
+        [Service Session] as SessionService
+        [Service Résultats] as ResultService
+        [Service Statistiques] as StatsService
+    }
+    
+    package "Controllers" {
+        [QuizController] as QuizCtrl
+        [UserController] as UserCtrl
+        [ResultController] as ResultCtrl
+        [DashboardController] as DashCtrl
+    }
+    
+    package "Repositories" {
+        [QuizRepository] as QuizRepo
+        [UserRepository] as UserRepo
+        [ResultRepository] as ResultRepo
+        [SessionRepository] as SessionRepo
+    }
+}
+
+' Couche Données
+database "MySQL" as DB {
+    [users]
+    [quizzes]
+    [questions]
+    [answers]
+    [sessions]
+    [results]
+}
+
+' Exports
+package "Exports" {
+    [Export CSV] as CSV
+    [Export PDF] as PDF
+}
+
+' Relations Présentation -> Controllers
+WebFormateur --> API
+WebApprenant --> API
+API --> QuizCtrl
+API --> UserCtrl
+API --> ResultCtrl
+API --> DashCtrl
+
+' Relations Controllers -> Auth
+QuizCtrl --> Auth
+UserCtrl --> Auth
+ResultCtrl --> Auth
+DashCtrl --> Auth
+
+Auth --> Roles
+
+' Relations Controllers -> Services
+QuizCtrl --> QuizService
+UserCtrl --> UserService
+ResultCtrl --> ResultService
+DashCtrl --> StatsService
+
+QuizService --> SessionService
+ResultService --> StatsService
+
+' Relations Services -> Repositories
+QuizService --> QuizRepo
+UserService --> UserRepo
+ResultService --> ResultRepo
+SessionService --> SessionRepo
+StatsService --> ResultRepo
+StatsService --> QuizRepo
+
+' Relations Repositories -> Base de données
+QuizRepo --> DB
+UserRepo --> DB
+ResultRepo --> DB
+SessionRepo --> DB
+
+' Relations Exports
+ResultCtrl --> CSV
+ResultCtrl --> PDF
+CSV --> ResultRepo
+PDF --> ResultRepo
+
+' Notes explicatives
+note right of Auth
+  JWT Token
+  Validation des sessions
+  Middleware de sécurité
+end note
+
+note bottom of QuizService
+  Création/modification de quiz
+  Gestion des questions
+  Publication et partage
+end note
+
+note bottom of StatsService
+  Calcul des moyennes
+  Taux de réussite
+  Statistiques par groupe
+end note
+
+note right of DB
+  Structure normalisée
+  Relations entre entités
+  Contraintes RGPD
+end note
+
+@enduml
