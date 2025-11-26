@@ -1,0 +1,70 @@
+@startuml QuizLearn State Diagram
+
+skinparam state {
+    BackgroundColor #E8F4F8
+    BorderColor #3498DB
+    ArrowColor #2C3E50
+}
+
+title Diagramme d'état - Cycle de vie d'un Quiz
+
+[*] --> Brouillon : Création par formateur
+
+state Brouillon {
+    state "Ajout questions" as Questions
+    state "Configuration" as Config
+    Questions --> Config
+}
+
+Brouillon --> Publié : Publier
+Brouillon --> [*] : Supprimer
+
+state Publié {
+    state "Code d'accès généré" as Code
+    state "Disponible aux apprenants" as Dispo
+    Code --> Dispo
+}
+
+Publié --> EnCours : Apprenant démarre
+Publié --> Archivé : Archiver
+
+state EnCours {
+    state "Questions affichées" as Display
+    state "Réponses en cours" as Answering
+    state "Chronomètre actif" as Timer
+    
+    Display --> Answering
+    Answering --> Timer
+    Timer --> Answering : Question suivante
+}
+
+EnCours --> Terminé : Soumettre réponses
+EnCours --> Abandonné : Timeout / Abandon
+
+state Terminé {
+    state "Calcul du score" as Calc
+    state "Résultats disponibles" as Results
+    Calc --> Results
+}
+
+Terminé --> [*] : Score enregistré
+Abandonné --> [*]
+Archivé --> [*]
+
+note right of Publié
+  Lien/QR code actif
+  Visible aux apprenants
+end note
+
+note right of EnCours
+  Session individuelle
+  Progression sauvegardée
+end note
+
+note right of Terminé
+  Score calculé
+  Corrections affichées
+  Export possible
+end note
+
+@enduml
