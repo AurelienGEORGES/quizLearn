@@ -1,0 +1,97 @@
+@startuml activite
+|Formateur|
+start
+:Accéder à la création de quiz;
+
+:Saisir informations générales;
+note right
+  - Titre
+  - Description
+  - Durée
+  - Niveau
+end note
+
+|Système|
+:Valider les informations;
+
+if (Informations valides ?) then (non)
+  |Formateur|
+  :Afficher erreurs;
+  stop
+else (oui)
+  |Formateur|
+  repeat
+    :Choisir type de question;
+    
+    fork
+      :Saisir intitulé;
+    fork again
+      :Définir points;
+    end fork
+    
+    if (Type de question ?) then (QCM)
+      repeat
+        :Ajouter proposition;
+        :Marquer si correcte;
+      repeat while (Ajouter autre proposition ?)
+      
+      |Système|
+      if (Au moins 2 propositions ?) then (non)
+        |Formateur|
+        :Afficher erreur;
+        stop
+      else (oui)
+      endif
+      
+    elseif (Vrai/Faux) then
+      |Formateur|
+      :Sélectionner réponse correcte;
+      
+    elseif (Texte libre) then
+      |Formateur|
+      :Saisir réponse attendue;
+    endif
+    
+    |Système|
+    :Enregistrer question;
+    
+    |Formateur|
+  repeat while (Ajouter autre question ?)
+  
+  |Système|
+  if (Au moins 1 question ?) then (non)
+    |Formateur|
+    :Afficher erreur;
+    stop
+  else (oui)
+  endif
+  
+  |Formateur|
+  :Prévisualiser le quiz;
+  
+  if (Quiz satisfaisant ?) then (non)
+    :Modifier le quiz;
+  else (oui)
+  endif
+  
+  :Valider la création;
+  
+  |Système|
+  :Sauvegarder le quiz;
+  :Générer code d'accès;
+  :Générer lien de partage;
+  :Générer QR code;
+  
+  |Formateur|
+  :Afficher confirmation + options de partage;
+  
+  if (Publier maintenant ?) then (oui)
+    |Système|
+    :Publier le quiz;
+  else (non)
+    :Enregistrer comme brouillon;
+  endif
+endif
+
+stop
+@enduml
