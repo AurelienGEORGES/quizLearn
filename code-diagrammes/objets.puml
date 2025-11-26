@@ -1,0 +1,103 @@
+@startuml objets
+
+skinparam object {
+    BackgroundColor #E8F4F8
+    BorderColor #3498DB
+}
+
+title Diagramme d'objet - Exemple concret d'une session QuizLearn
+
+object "formateur1 : User" as formateur {
+    id = 1
+    nom = "Jhon Doe"
+    email = "jhon.doe@formation.fr"
+    role = "FORMATEUR"
+}
+
+object "quiz1 : Quiz" as quiz {
+    id = 101
+    titre = "Symfony Basics"
+    description = "Quiz sur les fondamentaux"
+    duree = 30
+    niveau = "Débutant"
+    code_acces = "SF2024"
+    statut = "Publié"
+}
+
+object "question1 : Question" as q1 {
+    id = 201
+    texte = "Qu'est-ce qu'un Controller ?"
+    type = "QCM"
+    points = 2
+}
+
+object "question2 : Question" as q2 {
+    id = 202
+    texte = "Symfony utilise le pattern MVC"
+    type = "Vrai/Faux"
+    points = 1
+}
+
+object "reponse1 : Answer" as r1 {
+    id = 301
+    texte = "Gère les requêtes HTTP"
+    est_correcte = true
+}
+
+object "reponse2 : Answer" as r2 {
+    id = 302
+    texte = "Gère la base de données"
+    est_correcte = false
+}
+
+object "session1 : Session" as session {
+    id = 401
+    nom_groupe = "Promo 2025"
+    date_debut = "2025-01-15"
+    date_fin = "2025-02-15"
+}
+
+object "apprenant1 : User" as apprenant {
+    id = 2
+    nom = "Marie Martin"
+    email = "marie@student.fr"
+    role = "APPRENANT"
+}
+
+object "resultat1 : Result" as result {
+    id = 501
+    score = 8
+    score_max = 10
+    temps_ecoule = 25
+    date_soumission = "2025-01-20 14:30"
+    statut = "Terminé"
+}
+
+' Relations
+formateur --> quiz : crée
+quiz --> q1
+quiz --> q2
+q1 --> r1
+q1 --> r2
+quiz --> session : associé à
+session --> apprenant : contient
+apprenant --> result : passe
+result --> quiz : pour
+result --> session : dans
+
+note right of quiz
+  Quiz publié et accessible
+  via code SF2024
+end note
+
+note bottom of result
+  Score: 8/10 (80%)
+  Temps: 25min sur 30min
+end note
+
+note left of session
+  Groupe d'apprenants
+  actif pendant 1 mois
+end note
+
+@enduml
