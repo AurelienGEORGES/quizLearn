@@ -1,0 +1,31 @@
+@startuml QuizLearn C4 Container Diagram
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagramme C4 Container - QuizLearn
+
+Person(formateur, "Formateur", "Crée et gère les quiz, consulte les résultats")
+Person(apprenant, "Apprenant", "Répond aux quiz et consulte ses scores")
+Person(administrateur, "Administrateur", "Gère les comptes des étudiants et des apprenants")
+
+System_Boundary(quizlearn, "QuizLearn System") {
+    Container(webapp, "Front End", "Twig, Tailwind, React", "Interface utilisateur responsive pour formateurs et apprenants")
+    
+    Container(api, "Back End", "Symfony PHP", "Gère la logique métier et l'authentification JWT")
+    
+    Container(db, "Base de données", "MySQL", "Stocke les utilisateurs, quiz, questions, sessions et résultats")
+}
+
+System_Ext(export, "Service Export", "Génère les exports CSV/PDF")
+
+Rel(formateur, webapp, "Utilise", "HTTPS")
+Rel(apprenant, webapp, "Utilise", "HTTPS")
+Rel(administrateur, webapp, "Utilise", "HTTPS")
+
+Rel(webapp, api, "Appelle", "JSON/HTTPS")
+Rel(api, db, "Lit/Écrit", "SQL")
+Rel(api, export, "Génère", "Bibliothèques PHP")
+
+@enduml
