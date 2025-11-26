@@ -1,0 +1,47 @@
+@startuml C4-context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Diagramme de Contexte - QuizLearn
+
+Person(formateur, "Formateur", "Enseignant ou formateur qui crée et gère des quiz pour évaluer les apprenants")
+Person(apprenant, "Apprenant", "Étudiant qui passe les quiz et consulte ses résultats")
+Person(admin, "Administrateur", "Gère les utilisateurs et la configuration du système")
+
+System(quizlearn, "QuizLearn", "Plateforme de création, administration et passage de quiz pédagogiques avec analyse des résultats")
+
+Rel(formateur, quizlearn, "Crée et gère des quiz, consulte les résultats", "HTTPS")
+Rel(apprenant, quizlearn, "Passe les quiz, consulte ses scores", "HTTPS")
+Rel(admin, quizlearn, "Gère les utilisateurs et configure le système", "HTTPS")
+
+note right of quizlearn
+  **Fonctionnalités principales:**
+  • Création et gestion de quiz
+  • Passage de quiz interactif
+  • Calcul automatique des résultats
+  • Statistiques et analytics
+  • Export PDF/CSV
+  • Gestion de groupes
+  • Authentification sécurisée (JWT)
+end note
+
+note left of formateur
+  **Utilise QuizLearn pour:**
+  • Créer des quiz (QCM, V/F, texte)
+  • Publier via lien/QR code
+  • Suivre les résultats
+  • Gérer des groupes
+  • Exporter les données
+end note
+
+note right of apprenant
+  **Utilise QuizLearn pour:**
+  • Accéder aux quiz via code
+  • Répondre aux questions
+  • Voir son score
+  • Consulter les corrections
+  • S'autoévaluer
+end note
+
+@enduml

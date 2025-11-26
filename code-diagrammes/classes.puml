@@ -1,0 +1,162 @@
+@startuml classes
+
+skinparam classAttributeIconSize 0
+
+class Utilisateur {
+    - id: Long
+    - nom: String
+    - email: String
+    - motDePasse: String
+    - photo: String
+    - dateCreation: DateTime
+    + seConnecter()
+    + seDeconnecter()
+    + modifierProfil()
+}
+
+enum Role {
+    ADMINISTRATEUR
+    FORMATEUR
+    APPRENANT
+}
+
+class Formateur {
+    - formation: String
+    + creerQuiz()
+    + publierQuiz()
+    + consulterResultats()
+}
+
+class Apprenant {
+    - niveau: String
+    + accederQuiz()
+    + repondreQuiz()
+    + consulterScore()
+}
+
+class Administrateur {
+    + gererUtilisateurs()
+    + configurerSysteme()
+}
+
+class Quiz {
+    - id: Long
+    - titre: String
+    - description: String
+    - duree: Integer
+    - niveau: String
+    - dateCreation: DateTime
+    - datePublication: DateTime
+    - codeAcces: String
+    - lienPartage: String
+    - qrCode: String
+    - modeCorrection: String
+    + publier()
+    + genererLien()
+    + genererQRCode()
+}
+
+abstract class Question {
+    - id: Long
+    - intitule: String
+    - ordre: Integer
+    - points: Integer
+    + valider()
+}
+
+class QuestionQCM {
+    - choixMultiple: Boolean
+    + ajouterProposition()
+}
+
+class QuestionVraiFaux {
+    - reponseCorrecte: Boolean
+}
+
+class QuestionTexteLibre {
+    - reponseAttendue: String
+    + comparerReponse()
+}
+
+class Proposition {
+    - id: Long
+    - texte: String
+    - estCorrecte: Boolean
+    - ordre: Integer
+}
+
+class Session {
+    - id: Long
+    - dateDebut: DateTime
+    - dateFin: DateTime
+    - statut: String
+    + demarrer()
+    + terminer()
+}
+
+class Reponse {
+    - id: Long
+    - contenu: String
+    - dateReponse: DateTime
+    - estCorrecte: Boolean
+    - pointsObtenus: Integer
+}
+
+class Resultat {
+    - id: Long
+    - score: Float
+    - tauxReussite: Float
+    - tempsTotal: Integer
+    - datePassage: DateTime
+    + calculerScore()
+    + genererPDF()
+    + exporterCSV()
+}
+
+class Groupe {
+    - id: Long
+    - nom: String
+    - description: String
+    - dateCreation: DateTime
+    + ajouterApprenant()
+    + retirerApprenant()
+}
+
+class Statistiques {
+    - id: Long
+    - moyenneScores: Float
+    - tempsMoyenQuestion: Integer
+    - tauxReussite: Float
+    + calculerMoyenne()
+    + genererRapport()
+}
+
+' Héritages
+Utilisateur <|-- Formateur
+Utilisateur <|-- Apprenant
+Utilisateur <|-- Administrateur
+
+Question <|-- QuestionQCM
+Question <|-- QuestionVraiFaux
+Question <|-- QuestionTexteLibre
+
+' Associations
+Utilisateur "1" -- "1" Role : possède >
+Formateur "1" -- "0..*" Quiz : crée >
+Formateur "1" -- "0..*" Groupe : gère >
+
+Quiz "1" *-- "1..*" Question : contient >
+QuestionQCM "1" o-- "2..*" Proposition : propose >
+
+Apprenant "0..*" -- "0..*" Groupe : appartient à >
+Apprenant "1" -- "0..*" Session : passe >
+
+Session "1" -- "1" Quiz : concerne >
+Session "1" *-- "1..*" Reponse : génère >
+Reponse "1" -- "1" Question : répond à >
+
+Session "1" -- "1" Resultat : produit >
+Quiz "1" -- "0..*" Statistiques : génère >
+Groupe "1" -- "0..*" Statistiques : possède >
+
+@enduml

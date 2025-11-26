@@ -1,0 +1,104 @@
+@startuml sequencePasser
+actor Apprenant
+participant "Interface Web" as UI
+participant "SessionController" as Controller
+participant "SessionService" as Service
+participant "QuizService" as QService
+participant "ResultatService" as RService
+participant "Chronomètre" as Timer
+database "Base de données" as DB
+
+Apprenant -> UI: Accéder via lien/code
+activate UI
+
+UI -> Controller: GET /quiz/{codeAcces}
+activate Controller
+
+Controller -> QService: recupererQuiz(codeAcces)
+activate QService
+QService -> DB: SELECT Quiz + Questions
+activate DB
+DB --> QService: Quiz complet
+deactivate DB
+QService --> Controller: quizDTO
+deactivate QService
+
+Controller --> UI: Afficher quiz
+deactivate Controller
+
+Apprenant -> UI: Démarrer le quiz
+
+UI -> Controller: POST /session/demarrer
+activate Controller
+
+Controller -> Service: demarrerSession(apprenantId, quizId)
+activate Service
+Service -> DB: INSERT Session
+DB --> Service: sessionId
+Service --> Controller: sessionDTO
+deactivate Service
+
+Controller --> UI: Session créée
+deactivate Controller
+
+UI -> Timer: Démarrer chronomètre(durée)
+activate Timer
+
+loop Pour chaque question
+    UI --> Apprenant: Afficher question N/Total
+    Apprenant -> UI: Sélectionner/Saisir réponse
+    
+    UI -> Controller: POST /reponse/enregistrer
+    activate Controller
+    Controller -> Service: enregistrerReponse(sessionId, questionId, reponse)
+    activate Service
+    Service -> DB: INSERT Reponse
+    DB --> Service: OK
+    Service --> Controller: Réponse sauvegardée
+    deactivate Service
+    Controller --> UI: Confirmation
+    deactivate Controller
+    
+    UI --> Apprenant: Indicateur progression
+end
+
+alt Temps écoulé
+    Timer --> UI: Timeout
+    UI -> Apprenant: Notification temps écoulé
+else Apprenant termine
+    Apprenant -> UI: Terminer le quiz
+end
+
+deactivate Timer
+
+UI -> Controller: POST /session/terminer
+activate Controller
+
+Controller -> Service: terminerSession(sessionId)
+activate Service
+
+Service -> RService: calculerResultat(sessionId)
+activate RService
+
+RService -> DB: SELECT Reponses + Questions
+DB --> RService: Données
+
+RService -> RService: Calculer score\nCalculer taux réussite\nCalculer temps total
+
+RService -> DB: INSERT Resultat
+DB --> RService: resultatId
+
+RService --> Service: resultatDTO
+deactivate RService
+
+Service -> DB: UPDATE Session (statut=TERMINE)
+Service --> Controller: sessionTerminee
+deactivate Service
+
+Controller --> UI: Résultat
+deactivate Controller
+
+UI --> Apprenant: Afficher score + corrections
+deactivate UI
+
+@enduml

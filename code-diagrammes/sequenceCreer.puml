@@ -1,0 +1,73 @@
+@startuml sequenceCreer
+actor Formateur
+participant "Interface Web" as UI
+participant "QuizController" as Controller
+participant "QuizService" as Service
+participant "QuestionService" as QService
+database "Base de données" as DB
+
+Formateur -> UI: Accéder à création quiz
+activate UI
+
+UI -> Controller: GET /quiz/nouveau
+activate Controller
+Controller -> UI: Formulaire création
+deactivate Controller
+
+Formateur -> UI: Saisir informations\n(titre, description, durée, niveau)
+Formateur -> UI: Ajouter questions
+
+loop Pour chaque question
+    Formateur -> UI: Définir type question\n(QCM/VraiFaux/TexteLibre)
+    Formateur -> UI: Saisir intitulé
+    Formateur -> UI: Définir barème (points)
+    
+    alt Question QCM
+        Formateur -> UI: Ajouter propositions
+        Formateur -> UI: Marquer réponse(s) correcte(s)
+    else Question Vrai/Faux
+        Formateur -> UI: Sélectionner réponse correcte
+    else Question Texte Libre
+        Formateur -> UI: Saisir réponse attendue
+    end
+end
+
+Formateur -> UI: Valider création quiz
+
+UI -> Controller: POST /quiz/creer
+activate Controller
+
+Controller -> Service: creerQuiz(quizDTO)
+activate Service
+
+Service -> DB: INSERT Quiz
+activate DB
+DB --> Service: quizId
+deactivate DB
+
+loop Pour chaque question
+    Service -> QService: creerQuestion(questionDTO, quizId)
+    activate QService
+    QService -> DB: INSERT Question
+    DB --> QService: questionId
+    
+    alt Question QCM
+        QService -> DB: INSERT Propositions
+    end
+    
+    QService --> Service: Question créée
+    deactivate QService
+end
+
+Service -> DB: Sauvegarder (transaction)
+DB --> Service: OK
+Service --> Controller: Quiz créé avec succès
+deactivate Service
+
+Controller --> UI: Confirmation + quizId
+deactivate Controller
+
+UI --> Formateur: Message succès\n+ Redirection vers quiz
+deactivate UI
+
+@enduml

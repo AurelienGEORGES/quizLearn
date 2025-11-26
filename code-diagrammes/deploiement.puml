@@ -1,0 +1,30 @@
+@startuml deploiement
+skinparam shadowing false
+skinparam nodesep 40
+skinparam ranksep 40
+skinparam componentStyle rectangle
+
+title Déploiement application Symfony/React
+
+actor "Utilisateur Web" as User
+
+node "Serveur OVH\n(VM)" {
+    node "Docker Engine" {
+
+        node "Container Symfony App" {
+            component "Service JWT"
+            component "Assets compilés\nReact/Webpack"
+            component "Symfony MVC"
+        }
+
+        node "Container MySQL" {
+            database "MySQL\n(Persistent Volume)"
+        }
+    }
+}
+
+User --> "Symfony MVC" : HTTPS
+
+"Symfony MVC" --> "MySQL\n(Persistent Volume)" : TCP 3306
+
+@enduml

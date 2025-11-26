@@ -1,0 +1,82 @@
+@startuml cas
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrateur" as Admin
+actor "Formateur" as Form
+actor "Apprenant" as App
+
+rectangle "QuizLearn" {
+  
+  package "Gestion des utilisateurs" {
+    usecase "Créer un compte" as UC1
+    usecase "S'authentifier" as UC2
+    usecase "Gérer son profil" as UC3
+    usecase "Gérer les utilisateurs" as UC4
+  }
+  
+  package "Gestion des quiz" {
+    usecase "Créer un quiz" as UC5
+    usecase "Modifier un quiz" as UC6
+    usecase "Supprimer un quiz" as UC7
+    usecase "Publier un quiz" as UC8
+    usecase "Générer lien/QR code" as UC9
+  }
+  
+  package "Passage de quiz" {
+    usecase "Accéder à un quiz" as UC10
+    usecase "Répondre aux questions" as UC11
+    usecase "Consulter son score" as UC12
+    usecase "Voir les corrections" as UC13
+  }
+  
+  package "Suivi et statistiques" {
+    usecase "Consulter les résultats" as UC14
+    usecase "Exporter les résultats" as UC15
+    usecase "Voir tableau de bord" as UC16
+    usecase "Analyser les statistiques" as UC17
+  }
+  
+  package "Gestion des groupes" {
+    usecase "Créer un groupe" as UC18
+    usecase "Affecter des apprenants" as UC19
+  }
+}
+
+' Relations Administrateur
+Admin --> UC1
+Admin --> UC2
+Admin --> UC3
+Admin --> UC4
+
+' Relations Formateur
+Form --> UC2
+Form --> UC3
+Form --> UC5
+Form --> UC6
+Form --> UC7
+Form --> UC8
+Form --> UC9
+Form --> UC14
+Form --> UC15
+Form --> UC16
+Form --> UC17
+Form --> UC18
+Form --> UC19
+
+' Relations Apprenant
+App --> UC1
+App --> UC2
+App --> UC3
+App --> UC10
+App --> UC11
+App --> UC12
+App --> UC13
+
+' Extensions et inclusions
+UC8 ..> UC9 : <<include>>
+UC11 ..> UC12 : <<extend>>
+UC12 ..> UC13 : <<extend>>
+UC5 ..> UC8 : <<extend>>
+
+@enduml
