@@ -1,0 +1,66 @@
+@startuml QuizLearn Communication Diagram
+
+skinparam actorStyle awesome
+skinparam backgroundColor #FEFEFE
+skinparam component {
+    BackgroundColor #E8F4F8
+    BorderColor #3498DB
+}
+
+title Diagramme de communication - QuizLearn (Flux essentiels)
+
+' Acteurs
+actor "Formateur" as Formateur
+actor "Apprenant" as Apprenant
+
+' Composants principaux
+component "API REST" as API
+component "Auth JWT" as Auth
+component "Service Quiz" as Quiz
+component "Service Résultats" as Results
+database "MySQL" as DB
+
+' === FLUX FORMATEUR ===
+Formateur -right-> API : 1: Authentification
+API -right-> Auth : 1.1: Vérifier credentials
+Auth -down-> DB : 1.2: Valider utilisateur
+
+Formateur -down-> API : 2: Créer quiz
+API -down-> Quiz : 2.1: Enregistrer quiz
+Quiz -down-> DB : 2.2: Sauvegarder
+
+Formateur -down-> API : 3: Consulter résultats
+API -down-> Results : 3.1: Récupérer scores
+Results -down-> DB : 3.2: Requête résultats
+
+' === FLUX APPRENANT ===
+Apprenant -left-> API : 4: Accès quiz (code/lien)
+API -left-> Quiz : 4.1: Charger quiz
+Quiz -down-> DB : 4.2: Récupérer questions
+
+Apprenant -down-> API : 5: Soumettre réponses
+API -down-> Results : 5.1: Enregistrer réponses
+Results -down-> DB : 5.2: Calculer et sauvegarder score
+
+Apprenant -down-> API : 6: Voir score
+API -down-> Results : 6.1: Récupérer résultat
+Results -up-> API : 6.2: Retourner score + corrections
+
+note right of Auth
+  Génère JWT
+  Valide les rôles
+end note
+
+note left of Quiz
+  CRUD quiz
+  Gestion questions
+  Partage (code/QR)
+end note
+
+note right of Results
+  Enregistrement réponses
+  Calcul scores
+  Statistiques
+end note
+
+@enduml
