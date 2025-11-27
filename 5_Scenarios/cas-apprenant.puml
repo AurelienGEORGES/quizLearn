@@ -1,0 +1,62 @@
+@startuml cas-apprenant
+
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor<<Must>> #FF6B6B
+    BackgroundColor<<Should>> #FFA500
+    BackgroundColor<<Could>> #4ECDC4
+    BorderColor #2C3E50
+}
+
+title Diagramme de cas d'utilisation - APPRENANT (MoSCoW)
+
+actor "Apprenant" as Apprenant
+
+rectangle "QuizLearn - Espace Apprenant" {
+    
+    package "MUST HAVE" <<Must>> {
+        usecase "S'authentifier" as UC1 <<Must>>
+        usecase "Créer un compte" as UC2 <<Must>>
+        usecase "Accéder via code/lien" as UC21 <<Must>>
+        usecase "Répondre aux questions" as UC22 <<Must>>
+        usecase "Soumettre les réponses" as UC25 <<Must>>
+        usecase "Voir son score" as UC26 <<Must>>
+    }
+    
+    package "SHOULD HAVE" <<Should>> {
+        usecase "Modifier son profil" as UC3 <<Should>>
+        usecase "Réinitialiser mot de passe" as UC4 <<Should>>
+        usecase "Voir progression" as UC23 <<Should>>
+        usecase "Voir chronomètre" as UC24 <<Should>>
+        usecase "Voir les corrections" as UC27 <<Should>>
+    }
+    
+    package "COULD HAVE" <<Could>> {
+        usecase "Consulter historique" as UC28 <<Could>>
+    }
+}
+
+Apprenant --> UC1
+Apprenant --> UC2
+Apprenant --> UC3
+Apprenant --> UC4
+Apprenant --> UC21
+Apprenant --> UC22
+Apprenant --> UC23
+Apprenant --> UC24
+Apprenant --> UC25
+Apprenant --> UC26
+Apprenant --> UC27
+Apprenant --> UC28
+
+UC22 ..> UC23 : <<include>>
+UC22 ..> UC24 : <<include>>
+UC25 ..> UC26 : <<include>>
+
+legend right
+  |<#FF6B6B> MUST | 6 cas - Fonctionnalités critiques |
+  |<#FFA500> SHOULD | 5 cas - Importantes |
+  |<#4ECDC4> COULD | 1 cas - Souhaitable |
+endlegend
+
+@enduml

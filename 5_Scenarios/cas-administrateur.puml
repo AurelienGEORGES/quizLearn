@@ -1,0 +1,48 @@
+@startuml cas-administrateur
+
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor<<Must>> #FF6B6B
+    BackgroundColor<<Should>> #FFA500
+    BackgroundColor<<Could>> #4ECDC4
+    BorderColor #2C3E50
+}
+
+title Diagramme de cas d'utilisation - ADMINISTRATEUR (MoSCoW)
+
+actor "Administrateur" as Admin
+
+rectangle "QuizLearn - Administration" {
+    
+    package "MUST HAVE" <<Must>> {
+        usecase "S'authentifier" as UC1 <<Must>>
+        usecase "Gérer les utilisateurs" as UC38 <<Must>>
+        usecase "Attribuer des rôles" as UC39 <<Must>>
+    }
+    
+    package "SHOULD HAVE" <<Should>> {
+        usecase "Gérer données RGPD" as UC42 <<Should>>
+    }
+    
+    package "COULD HAVE" <<Could>> {
+        usecase "Supprimer un utilisateur" as UC40 <<Could>>
+        usecase "Consulter logs système" as UC41 <<Could>>
+        usecase "Configurer paramètres" as UC43 <<Could>>
+    }
+}
+
+Admin --> UC1
+Admin --> UC38
+Admin --> UC39
+Admin --> UC40
+Admin --> UC41
+Admin --> UC42
+Admin --> UC43
+
+legend right
+  |<#FF6B6B> MUST | 3 cas - Fonctionnalités critiques |
+  |<#FFA500> SHOULD | 1 cas - Important |
+  |<#4ECDC4> COULD | 3 cas - Souhaitables |
+endlegend
+
+@enduml

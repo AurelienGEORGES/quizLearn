@@ -1,0 +1,102 @@
+@startuml cas-enseignant
+
+skinparam actorStyle awesome
+skinparam usecase {
+    BackgroundColor<<Must>> #FF6B6B
+    BackgroundColor<<Should>> #FFA500
+    BackgroundColor<<Could>> #4ECDC4
+    BorderColor #2C3E50
+}
+
+title Diagramme de cas d'utilisation - FORMATEUR (MoSCoW)
+
+' === PARTIE HAUTE : MUST HAVE + SHOULD HAVE ===
+package "MUST HAVE - Gestion des quiz" <<Must>> {
+    usecase "S'authentifier" as UC1 <<Must>>
+    usecase "Créer un compte" as UC2 <<Must>>
+    usecase "Créer un quiz" as UC5 <<Must>>
+    usecase "Ajouter des questions" as UC9 <<Must>>
+    usecase "Publier un quiz" as UC12 <<Must>>
+    usecase "Générer code d'accès" as UC14 <<Must>>
+    usecase "Voir résultats d'un quiz" as UC29 <<Must>>
+}
+
+package "SHOULD HAVE - Gestion et statistiques" <<Should>> {
+    usecase "Modifier son profil" as UC3 <<Should>>
+    usecase "Réinitialiser mot de passe" as UC4 <<Should>>
+    usecase "Modifier un quiz" as UC6 <<Should>>
+    usecase "Supprimer un quiz" as UC7 <<Should>>
+    usecase "Configurer le barème" as UC10 <<Should>>
+    usecase "Définir la durée" as UC11 <<Should>>
+    usecase "Voir résultats par apprenant" as UC30 <<Should>>
+    usecase "Calculer moyenne des scores" as UC32 <<Should>>
+    usecase "Exporter résultats CSV" as UC35 <<Should>>
+    usecase "Consulter tableau de bord" as UC37 <<Should>>
+}
+
+' === ACTEUR CENTRAL ===
+actor "Formateur" as Formateur
+
+' === PARTIE BASSE : COULD HAVE ===
+package "COULD HAVE - Fonctionnalités avancées" <<Could>> {
+    usecase "Dupliquer un quiz" as UC8 <<Could>>
+    usecase "Archiver un quiz" as UC13 <<Could>>
+    usecase "Générer QR code" as UC15 <<Could>>
+    usecase "Créer un groupe" as UC16 <<Could>>
+    usecase "Ajouter des apprenants" as UC17 <<Could>>
+    usecase "Retirer des apprenants" as UC18 <<Could>>
+    usecase "Assigner un quiz" as UC19 <<Could>>
+    usecase "Définir période d'accès" as UC20 <<Could>>
+    usecase "Voir résultats par groupe" as UC31 <<Could>>
+    usecase "Voir temps moyen" as UC33 <<Could>>
+    usecase "Voir taux de réussite" as UC34 <<Could>>
+    usecase "Exporter résultats PDF" as UC36 <<Could>>
+}
+
+' === RELATIONS VERS LE HAUT (MUST + SHOULD) ===
+Formateur -up-> UC1
+Formateur -up-> UC2
+Formateur -up-> UC3
+Formateur -up-> UC4
+Formateur -up-> UC5
+Formateur -up-> UC6
+Formateur -up-> UC7
+Formateur -up-> UC9
+Formateur -up-> UC10
+Formateur -up-> UC11
+Formateur -up-> UC12
+Formateur -up-> UC14
+Formateur -up-> UC29
+Formateur -up-> UC30
+Formateur -up-> UC32
+Formateur -up-> UC35
+Formateur -up-> UC37
+
+' === RELATIONS VERS LE BAS (COULD) ===
+Formateur -down-> UC8
+Formateur -down-> UC13
+Formateur -down-> UC15
+Formateur -down-> UC16
+Formateur -down-> UC17
+Formateur -down-> UC18
+Formateur -down-> UC19
+Formateur -down-> UC20
+Formateur -down-> UC31
+Formateur -down-> UC33
+Formateur -down-> UC34
+Formateur -down-> UC36
+
+' === RELATIONS INCLUDE/EXTEND ===
+UC5 ..> UC9 : <<include>>
+UC5 ..> UC10 : <<include>>
+UC12 ..> UC14 : <<include>>
+UC12 ..> UC15 : <<extend>>
+UC29 ..> UC32 : <<include>>
+
+legend bottom
+  |<#FF6B6B> MUST | 7 cas - Fonctionnalités critiques MVP |
+  |<#FFA500> SHOULD | 10 cas - Importantes pour l'expérience |
+  |<#4ECDC4> COULD | 12 cas - Souhaitables si temps disponible |
+endlegend
+
+@enduml
